@@ -1,0 +1,20 @@
+{
+  "name": "Jarvis",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/nicolas-souza/Jarvis.git",
+  "author": "Nicolas de Souza <nicolas.j.souza@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.2",
+    "dotenv": "^16.0.3",
+    "node-telegram-bot-api": "^0.60.0",
+    "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "eslint": "^8.29.0"
+  }
+}
