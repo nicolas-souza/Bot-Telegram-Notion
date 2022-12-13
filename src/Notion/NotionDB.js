@@ -87,7 +87,60 @@ class NotionDB{
         }
     }
 
-    async TasksByStatus({status = "Esperando"}) {
+    async createCurso(title, url){
+        try {
+            const response = await notion.pages.create({
+                parent: {
+                    database_id: databaseId,
+                },
+                properties: {
+                    "Name": {
+                        "title": [
+                          {
+                            "type": "text",
+                            "text": {
+                              "content": title
+                            }
+                          }
+                        ]
+                    },
+                    "Link": {
+                        "url": url
+                    },
+                    "Type": {
+                        "select": {
+                          "name": "Curso"
+                        }
+                    },
+                    "Area": {
+                        "select": {
+                          "name": "Estudos"
+                        }
+                    },
+                    "Status": {
+                        "status": {
+                          "name": 'Esperando'
+                        }
+                    }
+
+                },
+                "children": [
+                    {
+                        "object": "block",
+                        "bookmark": {
+                            "url": url
+                        }
+                    }
+                ]
+            });
+
+            return mapNotionElement(response)
+        } catch (error) {
+            return null
+        }
+    }
+
+    async ByStatus(type, status){
         try {
             const response = await notion.databases.query({
                 database_id: databaseId,
@@ -96,7 +149,7 @@ class NotionDB{
                         {
                             "property": "Type",
                             "select": {
-                                "equals": "Task"
+                                "equals": type
                             }
                         },
                         {
@@ -107,79 +160,19 @@ class NotionDB{
                         }
                    ]
                 },
-                "sorts": [
+                "sorts":  [
                     {
                         "property": "Created time",
-                        "direction": "ascending" // older
+                        "direction": "descending"
                     }
-                ]
+                ],
+
+                "page_size": 5
 
             });
             return mapNotionResult(response.results);
         } catch (error){
-            console.log(error.body);
-        }
-    }
-
-    async TasksByAreaAndStatus({area = "Estudos", status="Caminhando"}) {
-        try {
-            const response = await notion.databases.query({
-                database_id: databaseId,
-                "filter": {
-                    "and":[
-                        {
-                            "property": "Type",
-                            "select": {
-                                "equals": "Task"
-                            }
-                        },
-                        {
-                            "property": "Area",
-                            "select": {
-                                "equals": area
-                            }
-                        },
-                        {
-                            "property": "Status",
-                            "status": {
-                                "equals": status
-                            }
-                        }
-                   ]
-                }
-
-            });
-            return mapNotionResult(response.results);
-        } catch (error){
-            console.log(error.body);
-        }
-    }
-
-    async CursoByStatus({status = "Esperando"}) {
-        try {
-            const response = await notion.databases.query({
-                database_id: databaseId,
-                "filter": {
-                    "and":[
-                        {
-                            "property": "Type",
-                            "select": {
-                                "equals": "Curso"
-                            }
-                        },
-                        {
-                            "property": "Status",
-                            "status": {
-                                "equals": status
-                            }
-                        }
-                   ]
-                }
-
-            });
-            return mapNotionResult(response.results);
-        } catch (error){
-            console.log(error.body);
+            //console.log(error.body);
         }
     }
 

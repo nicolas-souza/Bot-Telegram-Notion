@@ -14,21 +14,19 @@ const optArea = ['Radix', 'Estudos', 'Pessoal', 'Faculdade'];
 
 class Helper {
     async selectAction(action) {
-        if (action.startsWith('/task')){
-            let data;
-            let status;
-            status = action.replace("/task ", "");
-            if(optStatus.includes(status)){
-                data = await NotionDB.TasksByStatus({status: status})
-                return data;
-            } else {
-                return null;
-            }
-        }
-        if(action.startsWith('/curso')){
+        try {
+
+            const array = action.split(" ");
+            const type = dictAction[array[0]];
+            const status = array[1];
+            const data = await NotionDB.ByStatus(type, status)
+            return data;
+
+        } catch(error){
+
+            return null;
 
         }
-        return null;
     }
 
     async formatData(data, action){
@@ -49,7 +47,18 @@ Area: ${element.Area}
         }
 
         if(action.startsWith("/curso")){
-
+            status = action.replace("/curso ", "");
+            mensagem = `
+        <b><i>Curso com status: "${status}</i></b>"
+        `;
+            data.forEach(element => {
+                mensagem += `
+Titulo: ${element.Name}
+Tags: ${element.Tags}
+Link: ${element.Link}
+---------------------------------------
+`
+            });
         }
 
         return mensagem;
@@ -72,7 +81,7 @@ Area: ${element.Area}
 
     try {
         const data = await NotionDB.createTask(opt);
-        
+
         mensagem = `
             <b><i>Tasks recém adicionada: </i></b>
             `;
@@ -87,6 +96,32 @@ Area: ${element.Area}
 
     }
 
+    return mensagem;
+   }
+
+   async addCurso(expression){
+
+    let mensagem = '';
+    const arrayMsg = expression.split(" ");
+
+    const url = arrayMsg.pop();
+    const title = expression.replace(url, "");
+    try{
+        const data = await NotionDB.createCurso(title, url);
+        mensagem = `
+        <b><i>Curso recém adicionado: </i></b>
+        `;
+
+        mensagem += `
+Titulo: ${data.Name}
+Area: ${data.Area}
+Link: ${data.Link}
+---------------------------------------
+`
+
+    }catch(error){
+
+    }
     return mensagem;
    }
 }
