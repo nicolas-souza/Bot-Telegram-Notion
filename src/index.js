@@ -16,11 +16,10 @@ const sendMenu = (chatId) => {
         "reply_markup": {
             "inline_keyboard": [
                             [
-                                { text: 'Áreas', callback_data: '/area'},
-                                { text: 'Cursos', callback_data: '/curso'}
+                                { text: 'Tasks', callback_data: '/task'}
                             ],
                             [
-                                { text: 'Tasks', callback_data: '/task'},
+                                { text: 'Cursos', callback_data: '/curso'},
                                 { text: 'Projetos', callback_data: '/projeto'}
                             ]
             ]
@@ -67,6 +66,20 @@ const sendMenuCurso = (opts) => {
     });
 }
 
+const sendMenuProjeto = (opts) => {
+    bot.sendMessage(opts.chat_id, "Qual status para a lista de projetos?", {
+        "reply_markup": {
+            "inline_keyboard": [
+                [
+                    { text: '👀 Esperando', callback_data: '/projeto Esperando' },
+                    { text: '👣 Caminhando', callback_data: '/projeto Caminhando' },
+                    { text: '🤓 Aprovado', callback_data: '/projeto Aprovado' },
+                ]
+            ]
+        }
+    });
+}
+
 bot.onText(/\/addtask (.+)/, (msg, match) => {
     const chatId = msg.chat.id;
     const expression = match[1];
@@ -96,45 +109,27 @@ bot.onText(/\/addcurso (.+)/, (msg, match) => {
 
 });
 
-bot.onText(/\/addConteudo (.+)/, (msg, match) => {
+bot.onText(/\/addconteudo (.+)/, (msg, match) => {
     const chatId = msg.chat.id;
-    const resp = match[1];
+    const expression = match[1];
 
-    //bot.sendMessage(chatId, "Qual status gostaria de verificar?");
+    try{
+        Helper.addConteudo(expression).then((response) => {
+            bot.sendMessage(chatId, response, {parse_mode: "HTML"});
+            sendMenu(chatId);
+        })
+    } catch {
+        bot.sendMessage(chatId, "Algo estranho aconteceu, confira as informações e tente novamente 😊");
+    }
 
 });
 
-// bot.onText(/\/task/, (msg, match) => {
-//   const chatId = msg.chat.id;
-//   //const resp = match[1]; // the captured "whatever"
-
-//   bot.sendMessage(chatId, "Qual status gostaria de verificar?", {
-//     "reply_markup": {
-//         "remove_keyboard":true,
-//         "inline_keyboard": [
-//             [
-//                 { text: 'Esperando', callback_data: '/task Esperando' }
-//             ],
-//             [
-//                 { text: 'Caminhando', callback_data: '/task Caminhando' },
-//                 { text: 'Esperando Aprovação', callback_data: '/task Esperando Aprovação' },
-//                 { text: 'Revisão', callback_data: '/task Revisão'}
-//             ],
-//             [
-//                 { text: 'Aprovado', callback_data: '/task Aprovado' },
-//                 { text: 'Finalizado', callback_data: '/task Finalizado' },
-
-//             ],
-//             [
-//                 { text: 'Arquivo', callback_data: '/task Arquivo' }
-//             ]
-//         ]
-//     }
-//   });
-
-// });
-
 bot.onText(/\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    sendMenu(chatId);
+});
+
+bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     sendMenu(chatId);
 });
@@ -148,14 +143,11 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
     };
 
     switch(action){
-        case('/area'):
-            console.log("area")
-        break;
         case('/curso'):
             sendMenuCurso(opts);
         break;
         case('/projeto'):
-            console.log("projeto")
+            sendMenuProjeto(opts);
         break;
         case('/task'):
             sendMenuTask(opts);
@@ -169,14 +161,29 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
                 mensagem = await Helper.formatData(data, action);
                 await bot.sendMessage(opts.chat_id, mensagem, {parse_mode: "HTML"});
             }
-
             sendMenu(opts.chat_id);
         break;
     }
-  });
-
-bot.onText(/\/help/, (msg) => {
-  const chatId = msg.chat.id;
-  sendMenu(chatId);
 });
+
+bot.on('message', async (msg) => {
+    const action = msg.text;
+    const opts = {
+      chat_id: msg.chat.id,
+      message_id: msg.message_id,
+    };
+
+    if(!action.startsWith('/')){
+        let data = await Helper.searchConteudo(action);
+        let mensagem = "";
+
+        if(data != null){
+            mensagem = await Helper.formatData(data, action);
+            await bot.sendMessage(opts.chat_id, mensagem, {parse_mode: "HTML"});
+            sendMenu(opts.chat_id);
+        }
+    } 
+})
+
+
 

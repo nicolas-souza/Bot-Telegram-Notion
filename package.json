@@ -6,7 +6,8 @@
   "author": "Nicolas de Souza <nicolas.j.souza@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.2",
