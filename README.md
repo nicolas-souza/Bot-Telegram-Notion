@@ -10,15 +10,14 @@ Type: Documentação
 
 # Objetivo
 
-<aside>
+
 📢 Desenvolver um bot telegram capaz de gerir meu banco de dados Notion através da sua API oficial
 
-</aside>
 
-<aside>
+
 🔎 Rodar a aplicação dentro de um container Docker
 
-</aside>
+
 
 # Tecnologias Empregadas
 
