@@ -44,7 +44,7 @@ Nesse projeto em questão somaremos a tudo isso o poder do Notion
 # Funcionalidades
 
 > Este bot acabou por ficar muito pessoal, mas com algumas adaptações, qualquer um pode criar o seu próprio Jarvis!
-> 
+>
 
 ## Menu Principal
 
@@ -72,6 +72,5 @@ Nesse projeto em questão somaremos a tudo isso o poder do Notion
 
 ![Untitled](Bot%20Telegram%20+%20Notion%20b90dac91cb0c45ca8bf085b6909291e8/Untitled%205.png)
 
-Pra quem quise saber mais, o código já está disponível no GitHub! 
 
-[GitHub - nicolas-souza/Jarvis](https://github.com/nicolas-souza/Jarvis)
+[Sobre mim](https://www.notion.so/nicolasdesouza/Um-pouco-sobre-mim-70223a91d7244fa6ba361d47121adc24)
